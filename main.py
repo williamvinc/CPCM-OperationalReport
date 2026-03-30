@@ -132,10 +132,10 @@ def show_kpis(df: pd.DataFrame) -> None:
     avg_proc = df["Bill Duration(Mins)"].mean()
 
     col1, col2, col3, col4 = st.columns(4)
-    col1.metric("Total Transactions", total_tx, help="Total unik nomor tagihan. Data ini dihitung dari jumlah nilai unik pada kolom 'Bill No.'.")
-    col2.metric("Active Days", active_days, help="Jumlah hari operasional aktif dalam rentang waktu yang dipilih. Dihitung dari 'Business Date'.")
-    col3.metric("Active Hours", active_hours, help="Jumlah jam berbeda di mana ada transaksi secara akumulatif. Data ini diekstrak dari kolom 'Order Start Time'.")
-    col4.metric("Avg Proc Time (Mins)", f"{avg_proc:.1f}", help="Rata-rata waktu pengerjaan pesanan. Dihitung dari rata-rata kolom 'Bill Duration(Mins)'.")
+    col1.metric("Total Transactions", total_tx, help="Unique transaction from 'Bill No.' column")
+    col2.metric("Active Days", active_days, help="Active days from 'Business Date' column")
+    col3.metric("Active Hours", active_hours, help="Active hours from 'Order Start Time' column")
+    col4.metric("Avg Proc Time (Mins)", f"{avg_proc:.1f}", help="Average processing time from 'Bill Duration(Mins)' column")
 
 
 def show_peak_insight(agg: pd.DataFrame) -> None:
@@ -166,7 +166,7 @@ def show_idle(agg: pd.DataFrame) -> None:
     threshold = agg["transactions"].quantile(0.25)
     idle = agg[agg["transactions"] <= threshold]
 
-    st.subheader("Low Activity Window", help="Daftar jam dengan aktivitas terendah (berada di bawah persentil ke-25). Perhitungan didasarkan pada jumlah transaksi dari kolom 'Bill No.'.")
+    st.subheader("Low Activity Window", help="List of hours with the lowest activity (below the 25th percentile). Calculated based on the number of transactions from the 'Bill No.' column.")
     st.dataframe(idle)
 
 
@@ -266,11 +266,11 @@ def main() -> None:
         agg_daily = aggregate_daily(df)
         agg_dow = aggregate_day_of_week(df)
 
-        st.subheader("Executive Summary", help="Ringkasan metrik utama operasional pada periode yang dipilih. Menampilkan performa berdasarkan total transaksi, hari aktif, dan jam aktif.")
+        st.subheader("Executive Summary", help="Summary of key operational metrics for the selected period. Displays performance based on total transactions, active days, and active hours.")
         show_kpis(df)
         show_peak_insight(agg_hourly)
 
-        st.subheader("Daily Trend & Day of Week", help="Menampilkan pergerakan jumlah transaksi dari hari ke hari dan agregasi transaksi berdasarkan nama hari (Senin-Minggu). Data dari kolom 'Business Date'.")
+        st.subheader("Daily Trend & Day of Week", help="Shows the movement of the number of transactions from day to day and the aggregation of transactions based on the day of the week (Monday-Sunday). Data from the 'Business Date' column.")
         col_c1, col_c2 = st.columns(2)
         with col_c1:
             try:
@@ -283,7 +283,7 @@ def main() -> None:
             except Exception as e:
                 st.error(f"plot_day_of_week error: {repr(e)}")
 
-        st.subheader("Produk Terlaris", help="Menampilkan 10 menu yang paling banyak dipesan dari rentang waktu yang dipilih berdasar kolom 'Item'.")
+        st.subheader("Produk Terlaris", help="Top 10 items sold from the selected period based on the 'Item' column.")
         try:
             plot_top_items(df)
         except Exception as e:
@@ -301,7 +301,7 @@ def main() -> None:
         except Exception as e:
             st.error(f"plot_stress error: {repr(e)}")
 
-        st.subheader("Category Behavior", help="Cek distribusi transaction per kategori berdasarkan jam dan hari operasional.")
+        st.subheader("Category Behavior", help="Check transaction distribution per category based on operational hours and days.")
         try:
             plot_category(df)
         except Exception as e:
@@ -312,7 +312,7 @@ def main() -> None:
         except Exception as e:
             st.error(f"plot_category_daily error: {repr(e)}")
 
-        st.subheader("Top Categories", help="Menampilkan peringkat kategori dari yang paling banyak dipesan.")
+        st.subheader("Top Categories", help="Top categories from the selected period based on the 'Category' column.")
         try:
             plot_top_categories(df)
         except Exception as e:
